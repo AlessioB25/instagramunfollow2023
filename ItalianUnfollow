@@ -16,8 +16,8 @@ import pandas as pd
 
 
 not_following_back = []
-instauser = ''
-instapass = ''
+instauser = 'USERNAME'
+instapass = 'PASSWORD'
 
 def unfollower():
     #webdriver = webdriver.Chrome(executable_path=chromedriver_path)
@@ -84,7 +84,7 @@ def get_people():
 def unfollowAllNotFollowU(): 
     
     for user in range(1, len(lista)):
-        profile2un = webdriver.get('https://www.instagram.com/'+ usertounfollow[user][0])
+        profile2un = webdriver.get('https://www.instagram.com/'+ lista[user][0])
         sleep(6)
         delete  = webdriver.find_element(By.XPATH, "//button[contains(.,'Segui già')]").click()
         sleep(3)
@@ -96,7 +96,7 @@ def unfollowAllNotFollowU():
         
 def fromexceltolist():
     df = pd.read_excel('/Users/alessio/Documents/Python/Instagrambot/Unfollow.xlsx') # can also index sheet by name or fetch all sheets
-    usertounfollow = df.values.tolist()
+    lista = df.values.tolist()
     
 if __name__ =="__main__":
     webdriver = webdriver.Chrome(executable_path='/Users/alessio/Documents/Python/pyBet/chromedriver') # Change this to your own chromedriver path!
