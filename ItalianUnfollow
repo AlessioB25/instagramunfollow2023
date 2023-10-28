@@ -74,7 +74,7 @@ def get_people():
                 """, scroll_box)
         links = scroll_box.find_elements_by_tag_name('a')
         names = [name.text for name in links if name.text != '']
-        close = webdriver.get('https://www.instagram.com/timeexceeded')
+        close = webdriver.get('https://www.instagram.com/')
         sleep(3)
         
         return names
