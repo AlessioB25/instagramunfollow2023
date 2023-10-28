@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Mar 13 12:28:19 2021
+
+@author: alessio
+"""
+from bs4 import BeautifulSoup as bs
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
+from time import sleep, strftime
+from random import randint
+import pandas as pd
+
+
+not_following_back = []
+cars_list = []
+
+def unfollower():
+    #webdriver = webdriver.Chrome(executable_path=chromedriver_path)
+    sleep(2)
+    webdriver.get('https://www.instagram.com/accounts/login/?source=auth_switcher')
+    sleep(3)
+    
+    username = webdriver.find_element_by_name('username')
+    username.send_keys('USERNAME')
+    password = webdriver.find_element_by_name('password')
+    password.send_keys('PASSWORD')
+    sleep(3)
+    
+    button_login = webdriver.find_element_by_xpath("//button[text()='Rifiuta cookie facoltativi']")#webdriver.find_element_by_css_selector('#react-root > section > main > div > article > div > div:nth-child(1) > div > form > div:nth-child(3) > button')
+    button_login.click()
+    sleep(3)
+    button_login = webdriver.find_element_by_xpath("//button[contains(.,'Accedi')]")#webdriver.find_element_by_css_selector('#react-root > section > main > div > article > div > div:nth-child(1) > div > form > div:nth-child(3) > button')
+    button_login.click()
+    sleep(10)
+    button_login = webdriver.find_element_by_xpath("//div[@class='_ac8f']") #[contains(.,'Non ora')]")#webdriver.find_element_by_css_selector('#react-root > section > main > div > article > div > div:nth-child(1) > div > form > div:nth-child(3) > button')
+    button_login.click()
+    sleep(3)
+    button_login = webdriver.find_element_by_xpath("//button[contains(.,'Non ora')]")#webdriver.find_element_by_css_selector('#react-root > section > main > div > article > div > div:nth-child(1) > div > form > div:nth-child(3) > button')
+    button_login.click()
+    sleep(3)
+
+def get_unfollowers():
+        global not_following_back
+#        usernames = webdriver.find_element_by_xpath("/html/body/div[1]/section/nav/div[2]/div/div/div[3]/div/div[5]/span/img")
+#        usernames.click()
+        profile = webdriver.get('https://www.instagram.com/timeexceeded')
+        sleep(3)
+        Following = webdriver.find_element_by_xpath("//a[contains(@href,'/following')]")
+        Following.click()
+        following = get_people()
+        Followers = webdriver.find_element_by_xpath("//a[contains(@href,'/follower')]")
+        Followers.click()
+        followers = get_people()
+        not_following_back = [user for user in following if user not in followers]
+        print(not_following_back)
+        with open('notfollowfile.txt', 'w') as filehandle:
+                for listitem in not_following_back:
+                    filehandle.write('%s\n' % listitem)
+
+def get_people():
+        sleep(2)
+        scroll_box = webdriver.find_element_by_xpath("//div[@class='x1lq5wgf xgqcy7u x30kzoy x9jhf4c x2lah0s x10w6t97 x6ikm8r x10wlt62 x1n2onr6']")
+        prev_height, height = 0, 1
+        while prev_height != height:
+            prev_height = height
+            sleep(3)
+            height = webdriver.execute_script("""
+                arguments[0].scrollTo(0, arguments[0].scrollHeight); 
+                return arguments[0].scrollHeight;
+                """, scroll_box)
+        links = scroll_box.find_elements_by_tag_name('a')
+        names = [name.text for name in links if name.text != '']
+        close = webdriver.get('https://www.instagram.com/timeexceeded')
+        sleep(3)
+        
+        return names
+
+
+def unfollowAllNotFollowU(): 
+    
+    for user in range(1, len(lista)):
+        profile2un = webdriver.get('https://www.instagram.com/'+ lista[user][0])
+        sleep(6)
+        delete  = webdriver.find_element(By.XPATH, "//button[contains(.,'Segui già')]").click()
+        sleep(3)
+        sure = webdriver.find_element(By.XPATH,"//span[contains(.,'Non seguire più')]").click()
+        sleep(10)
+        
+        
+def fromexceltolist():
+    df = pd.read_excel('/Users/alessio/Documents/Python/Instagrambot/Unfollow.xlsx') # can also index sheet by name or fetch all sheets
+    lista = df.values.tolist()
+    
+if __name__ =="__main__":
+    webdriver = webdriver.Chrome(executable_path='/Users/alessio/Documents/Python/pyBet/chromedriver') # Change this to your own chromedriver path!
+
+    try: 
+        fromexceltolist()
+        unfollower()
+       # get_unfollowers()
+        unfollowAllNotFollowU()
+    except Exception as e:
+        print("Something went wrong")
+        print(e)
+        
