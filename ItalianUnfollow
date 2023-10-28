@@ -102,6 +102,7 @@ def unfollowAllNotFollowU():
                 exit()
         
 def fromexceltolist():
+    global lista
     df = pd.read_excel('/Users/alessio/Documents/Python/Instagrambot/Unfollow.xlsx') # can also index sheet by name or fetch all sheets
     lista = df.values.tolist()
     unfollower()
